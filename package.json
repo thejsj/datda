@@ -1,0 +1,41 @@
+{
+  "name": "motore",
+  "version": "0.0.1",
+  "description": "Import MongoDB database to and from RethinkDB",
+  "main": "lib/motore.js",
+  "dependencies": {
+    "bluebird": "^2.9.25",
+    "lodash": "^3.7.0",
+    "mongo-client": "^0.2.1",
+    "mongodb": "^2.0.28",
+    "q": "^1.3.0",
+    "rethinkdb": "^2.0.0",
+    "rethinkdb-init": "^0.0.3",
+    "should": "^6.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.4"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thejsj/motore.git"
+  },
+  "keywords": [
+    "mongo",
+    "mongodb",
+    "rethinkdb",
+    "import",
+    "export",
+    "database",
+    "cli"
+  ],
+  "author": "thejsj",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thejsj/motore/issues"
+  },
+  "homepage": "https://github.com/thejsj/motore"
+}

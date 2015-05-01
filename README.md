@@ -22,7 +22,8 @@ npm install motore
 
 ```
 motore
-  --from [mongo/rethinkdb]    // Specify wether to import from MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `mongo`)
+  --source [mongo/rethinkdb]  // Specify wether to import from MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `mongo`)
+  --target [mongo/rethinkdb]  // Specify wether to import to MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `rethinkdb`)
   --db                        // Name of database (Can be overwritten by `rdb_db` and `mongo_db`)
 
   --mongo_db name_of_database
@@ -36,8 +37,8 @@ motore
   --collections/--tables table_name,collection_name
                               // Limit the collections/tables you wish to import from the database (Default: All tables)
   --convert_id                // Convert Mongos’s _id to RethinkDB’s id and vice versa (Default: false)
-  --append                    // Append to table if table already exists (Default: false)
-  --batch                     // Number of documents/rows per insert query (Default: 1000)
+  --append_to_table           // Append to table if table already exists (Default: false)
+  --rows_per_batch            // Number of documents/rows per insert query (Default: 1000)
   --log                       // Log output
   --help                      // Help
 ```
@@ -48,7 +49,8 @@ motore
 var motore = require(‘motore’);
 
 motore.import({
-  from: ‘mongo’,
+  source: ‘mongo’,
+  target: ‘rethinkdb’,
   mongo: {
     host: ‘localhost’,
     port: 8080,
@@ -61,7 +63,8 @@ motore.import({
   },
   collections: [‘table_1’, ‘table_2’],
   convertId: true,
-  append: false
+  appendToTable: false,
+  rowsPerBatch: 10000
 })
 .then(function (log) {
   // Import log object
