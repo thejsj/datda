@@ -5,6 +5,40 @@ var Promise = require('bluebird');
 var MongoDriver = require('../../lib/drivers/mongodb');
 var mongoClient = Promise.promisifyAll(require('mongodb').MongoClient);
 
+var dropTestDatabase = function (done) {
+  mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
+    .then(function (db) {
+      db = Promise.promisifyAll(db);
+      return db.dropDatabaseAsync();
+    })
+    .then(mongoClient.closeAsync)
+    .then(done.bind(null, null));
+};
+
+var insertTestData = function (done, data) {
+  mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
+    .then(function (db) {
+      db = Promise.promisifyAll(db);
+      return db.dropDatabaseAsync()
+        .then(function () {
+          return db.createCollectionAsync('table1')
+           .then(function () {
+             return db.collectionAsync('table1');
+           });
+        })
+        .then(function (collection) {
+          collection = Promise.promisifyAll(collection);
+          return collection.insertAsync( data || [
+            { number: 1 },
+            { number: 2 },
+            { number: 3 }
+          ]);
+        });
+    })
+    .then(mongoClient.closeAsync)
+    .then(done.bind(null, null));
+};
+
 describe('MongoDB', function () {
 
   var mongo;
@@ -82,15 +116,7 @@ describe('MongoDB', function () {
     });
 
     // After
-    after(function (done) {
-      mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
-        .then(function (db) {
-          db = Promise.promisifyAll(db);
-          return db.dropDatabaseAsync();
-        })
-        .then(mongoClient.closeAsync)
-        .then(done.bind(null, null));
-    });
+    after(dropTestDatabase);
   });
 
   describe('createTables', function () {
@@ -113,4 +139,38 @@ describe('MongoDB', function () {
     });
   });
 
+  describe('getNumberOfRows', function () {
+
+    before(insertTestData);
+
+    it('should get the number of rows in a collection', function (done) {
+      mongo.getNumberOfRows('table1')
+        .then(function (numOfRows) {
+          numOfRows.should.equal(3);
+          done();
+        })
+        .catch(done);
+    });
+
+    after(dropTestDatabase);
+  });
+
+  describe('getRows', function () {
+
+    before(insertTestData);
+
+    it('should get the rows in a collection', function (done) {
+      mongo.getRows('table1', 2, 0)
+        .then(function (rows) {
+          console.log(rows);
+          rows.should.be.an.Array;
+          rows.length.should.equal(2);
+          rows[0].number.should.equal(1);
+          done();
+        });
+    });
+
+    after(dropTestDatabase);
+  });
 });
+
