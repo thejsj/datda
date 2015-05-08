@@ -162,12 +162,30 @@ describe('MongoDB', function () {
     it('should get the rows in a collection', function (done) {
       mongo.getRows('table1', 2, 0)
         .then(function (rows) {
-          console.log(rows);
           rows.should.be.an.Array;
           rows.length.should.equal(2);
           rows[0].number.should.equal(1);
           done();
         });
+    });
+
+    after(dropTestDatabase);
+  });
+
+  describe('insertRows', function () {
+
+    before(insertTestData);
+
+    it('should insert the rows into the collection', function (done) {
+      mongo.insertRows('table1', [{ hello: 1 }, { hello: 2 }])
+       .then(function () {
+         return mongo.getRows('table1', 10, 0);
+       })
+       .then(function (rows) {
+         rows.length.should.equal(5);
+         rows.should.containDeep([{ hello: 1 }, { hello : 2 }]);
+         done();
+       });
     });
 
     after(dropTestDatabase);
