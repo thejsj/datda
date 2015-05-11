@@ -32,7 +32,11 @@ var insertTestData = function (done, data) {
             { number: 1 },
             { number: 2 },
             { number: 3 }
-          ]);
+          ])
+          .then(function () {
+            console.log('createIndex');
+            return collection.createIndexAsync({ exampleIndex: 'text' });
+          });
         });
     })
     .then(mongoClient.closeAsync)
@@ -99,7 +103,14 @@ describe('MongoDB', function () {
           return db.dropDatabaseAsync()
             .then(function () {
               return q.all(tables.map(function (table) {
-                return db.createCollectionAsync(table);
+                return db.createCollectionAsync(table)
+                  .then(function () {
+                    return db.collectionAsync(table);
+                  })
+                  .then(function (coll) {
+                    coll = Promise.promisifyAll(coll);
+                    return coll.createIndex({ 'exampleIndex': 'text' });
+                  });
               }));
             });
         })
