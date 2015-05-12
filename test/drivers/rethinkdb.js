@@ -184,11 +184,12 @@ describe('RethinkDB', function () {
     before(insertTestData);
 
     it('should get the rows in a collection', function (done) {
-      rdb.getRows('table1', 2, 0)
+      rdb.getRows('table1', 3, 0)
         .then(function (rows) {
           rows.should.be.an.Array;
-          rows.length.should.equal(2);
-          rows[0].number.should.equal(1);
+          rows.length.should.equal(3);
+          // NOTE: You can't guarantee the order of the documents
+          _.pluck(rows, 'number').sort().should.eql([1, 2, 3]);
           done();
         });
     });
@@ -196,14 +197,14 @@ describe('RethinkDB', function () {
     after(dropTestDatabase);
   });
 
-  xdescribe('insertRows', function () {
+  describe('insertRows', function () {
 
     before(insertTestData);
 
     it('should insert the rows into the collection', function (done) {
-      mongo.insertRows('table1', [{ hello: 1 }, { hello: 2 }])
+      rdb.insertRows('table1', [{ hello: 1 }, { hello: 2 }])
        .then(function () {
-         return mongo.getRows('table1', 10, 0);
+         return rdb.getRows('table1', 10, 0);
        })
        .then(function (rows) {
          rows.length.should.equal(5);
