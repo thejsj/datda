@@ -34,7 +34,6 @@ var insertTestData = function (done, data) {
             { number: 3 }
           ])
           .then(function () {
-            console.log('createIndex');
             return collection.createIndexAsync({ exampleIndex: 'text' });
           });
         });

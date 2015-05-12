@@ -6,7 +6,7 @@ var RethinkDBDriver = require('../../lib/drivers/rethinkdb');
 var r = require('rethinkdb');
 
 var testDBName = 'motoreTest';
-var data = [
+var defaultData = [
   { number: 1 },
   { number: 2 },
   { number: 3 }
@@ -17,22 +17,26 @@ var dropTestDatabase = function (done) {
   r.connect(this.connectionOpts)
     .then(function (conn) {
       r.dbDrop(testDBName).run(this.conn)
+        .catch(function () { })
         .then(function () {
-          return this.conn.close();
-        }.bind(this))
+          return conn.close();
+        })
         .then(done.bind(null, null));
     });
 };
 
 var insertTestData = function (done, data) {
+  if (!data) data = defaultData;
   r.connect(this.connectionOpts)
     .then(function (conn) {
-      r.dbDrop(testDBName).run(this.conn)
+      r.dbDrop(testDBName).run(conn)
         .then(function () {
           return r.dbCreate(testDBName).run(conn);
         })
         .then(function () {
-          return r.tableCreate('table1').run(conn);
+          conn.use(testDBName);
+          return r.tableCreate('table1').run(conn)
+            .catch(function () { });
         })
         .then(function () {
           return r.table('table1')
@@ -40,11 +44,13 @@ var insertTestData = function (done, data) {
             .run(conn);
         })
         .then(function () {
-          return r.table('table1').indexCreate('exampleIndex').run(conn);
+          return r.table('table1').indexCreate('exampleIndex').run(conn)
+            .catch(function () { });
         })
         .then(function () {
           return conn.close();
-        });
+        })
+        .nodeify(done);
     });
 };
 
@@ -98,41 +104,37 @@ describe('RethinkDB', function () {
 
   });
 
-  xdescribe('getTables', function () {
+  describe('getTables', function () {
 
-    var tables = ['table1', 'helloWorld' + Math.random(), 'anotherTable' + Math.random()];
+    var tables = ['table1', 'helloWorld' + Math.random(), ('anotherTable' + Math.random()).replace('.', '')];
     before(function (done) {
       r.connect(this.connectionOpts)
         .then(function (conn) {
           return r.dbDrop(testDBName).run(conn)
-          // ...
-
-        })
-      mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
-        .then(function (db) {
-          db = Promise.promisifyAll(db);
-          return db.dropDatabaseAsync()
+            .catch(function () { })
+            .then(function () {
+              return r.dbCreate(testDBName).run(conn);
+            })
             .then(function () {
               return q.all(tables.map(function (table) {
-                return db.createCollectionAsync(table)
+                return r.tableCreate(table).run(conn)
+                  .catch(function () { })
                   .then(function () {
-                    return db.collectionAsync(table);
-                  })
-                  .then(function (coll) {
-                    coll = Promise.promisifyAll(coll);
-                    return coll.createIndex({ 'exampleIndex': 'text' });
+                    return r.table(table).indexCreate('exampleIndex');
                   });
               }));
+            })
+            .then(function () {
+              return conn.close();
             });
         })
-        .then(mongoClient.closeAsync)
-        .then(done.bind(null, null));
+        .nodeify(done);
     });
 
     it('should get all the tables in the database as an object with a name property', function (done) {
-      mongo.getTables()
-        .then(function (collections) {
-          _.pluck(collections, 'name').sort().should.eql(tables.sort());
+      rdb.getTables()
+        .then(function (tables) {
+          _.pluck(tables, 'name').sort().should.eql(tables.sort());
           done();
         });
     });
@@ -141,17 +143,17 @@ describe('RethinkDB', function () {
     after(dropTestDatabase);
   });
 
-  xdescribe('createTables', function () {
+  describe('createTables', function () {
 
     it('should create tables passed to it as an object', function (done) {
       var tables = [
         { name: 'hello' },
-        { name: 'hello' + Math.random() },
+        { name: ('hello' + Math.random()).replace('.', '') },
         { name: 'hello2' },
       ];
-      mongo.createTables(tables)
+      rdb.createTables(tables)
         .then(function () {
-          return mongo.getTables();
+          return rdb.getTables();
         })
         .then(function (_tables) {
           _.pluck(tables, 'name').sort().should.eql(_.pluck(tables, 'name').sort());
@@ -161,12 +163,12 @@ describe('RethinkDB', function () {
     });
   });
 
-  xdescribe('getNumberOfRows', function () {
+  describe('getNumberOfRows', function () {
 
     before(insertTestData);
 
     it('should get the number of rows in a collection', function (done) {
-      mongo.getNumberOfRows('table1')
+      rdb.getNumberOfRows('table1')
         .then(function (numOfRows) {
           numOfRows.should.equal(3);
           done();
@@ -177,12 +179,12 @@ describe('RethinkDB', function () {
     after(dropTestDatabase);
   });
 
-  xdescribe('getRows', function () {
+  describe('getRows', function () {
 
     before(insertTestData);
 
     it('should get the rows in a collection', function (done) {
-      mongo.getRows('table1', 2, 0)
+      rdb.getRows('table1', 2, 0)
         .then(function (rows) {
           rows.should.be.an.Array;
           rows.length.should.equal(2);
