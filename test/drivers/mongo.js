@@ -66,7 +66,7 @@ describe('MongoDB', function () {
     });
 
     // Doesn't work
-    xit('should throw an error if the database doesn\'t exists', function (done) {
+    it('should throw an error if the it\' source and the database doesn\'t exist', function (done) {
       var conn = new MongoDriver({
           host: 'localhost',
           port: 27017,
@@ -77,7 +77,23 @@ describe('MongoDB', function () {
         conn.connect()
          .catch(function (err) {
            done();
-         });
+         })
+         .then(done.bind(null, new Error('Should throw error')));
+    });
+
+    it('should throw an error if the it\' target and the database exists', function (done) {
+      var conn = new MongoDriver({
+          host: 'localhost',
+          port: 27017,
+          db: 'motore'
+        }, {
+          sourceOrTarget: 'target'
+        });
+        conn.connect()
+         .catch(function (err) {
+           done();
+         })
+         .then(done.bind(null, new Error('Should throw error')));
     });
 
     it('should throw an error if it can\'t connect to the host', function (done) {

@@ -11,7 +11,11 @@ var defaultData = [
   { number: 2 },
   { number: 3 }
 ];
-
+var connectionOpts = {
+  host: 'localhost',
+  port: 28015,
+  db: 'motoreTest'
+};
 
 var dropTestDatabase = function (done) {
   r.connect(this.connectionOpts)
@@ -73,12 +77,21 @@ describe('RethinkDB', function () {
 
   describe('connecting', function () {
 
+    before(function (done) {
+      r.connect(connectionOpts)
+        .then(function (conn) {
+          return r.dbCreate('motore').run(conn)
+            .catch(function () { })
+        })
+        .then(done.bind(null, null));
+    });
+
     it('should have connected propertly', function () {
       rdb.conn.should.be.a.Object;
     });
 
     // TODO: Should it throw an error? It should create it by default
-    xit('should throw an error if the database doesn\'t exists', function (done) {
+    it('should throw an error if its the source and the database doesn\'t exist', function (done) {
       var conn = new RethinkDBDriver({
           host: 'localhost',
           port: 28015,
@@ -88,6 +101,26 @@ describe('RethinkDB', function () {
         });
         conn.connect()
          .catch(function (err) {
+           err.message.should.match(/exist/);
+           err.message.should.match(/database/);
+           err.message.should.match(/source/i);
+           done();
+         });
+    });
+
+    it('should throw an error if its the target and the database exist', function (done) {
+      var conn = new RethinkDBDriver({
+          host: 'localhost',
+          port: 28015,
+          db: 'motore'
+        }, {
+          sourceOrTarget: 'target'
+        });
+        conn.connect()
+         .catch(function (err) {
+           err.message.should.match(/exist/);
+           err.message.should.match(/database/);
+           err.message.should.match(/target/i);
            done();
          });
     });
