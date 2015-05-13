@@ -64,6 +64,8 @@ describe('RethinkDB', function () {
       host: 'localhost',
       port: 28015,
       db: 'motoreTest'
+    }, {
+      sourceOrTarget: 'source'
     });
     rdb.connect()
      .then(done.bind(null, null));
@@ -81,6 +83,8 @@ describe('RethinkDB', function () {
           host: 'localhost',
           port: 28015,
           db: 'databaseThatDoesntExist'
+        }, {
+          sourceOrTarget: 'source'
         });
         conn.connect()
          .catch(function (err) {
@@ -93,6 +97,8 @@ describe('RethinkDB', function () {
           host: 'localhost',
           port: 9999,
           db: 'databaseThatDoesntExist'
+        }, {
+          sourceOrTarget: 'source'
         });
         conn.connect()
          .catch(function (err) {

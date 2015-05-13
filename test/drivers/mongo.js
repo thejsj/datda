@@ -52,6 +52,8 @@ describe('MongoDB', function () {
       host: 'localhost',
       port: 27017,
       db: 'motoreTest'
+    }, {
+      sourceOrTarget: 'source'
     });
     mongo.connect()
      .then(done.bind(null, null));
@@ -69,6 +71,8 @@ describe('MongoDB', function () {
           host: 'localhost',
           port: 27017,
           db: 'databaseThatDoesntExist'
+        }, {
+          sourceOrTarget: 'source'
         });
         conn.connect()
          .catch(function (err) {
@@ -81,6 +85,8 @@ describe('MongoDB', function () {
           host: 'localhost',
           port: 9999,
           db: 'databaseThatDoesntExist'
+        }, {
+          sourceOrTarget: 'source'
         });
         conn.connect()
          .catch(function (err) {

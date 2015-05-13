@@ -46,22 +46,22 @@ motore
 ### Code
 
 ```
-var motore = require(‘motore’);
+var motore = require('motore');
 
 motore.import({
-  source: ‘mongo’,
-  target: ‘rethinkdb’,
+  source: 'mongo',
+  target: 'rethinkdb',
   mongo: {
-    host: ‘localhost’,
+    host: 'localhost',
     port: 8080,
     db: ‘db’
   },
   rethinkdb: {
-    host: ‘localhost’,
+    host: 'localhost',
     port: 28015,
-    db: ‘db’
+    db: 'db'
   },
-  collections: [‘table_1’, ‘table_2’],
+  collections: ['table_1', 'table_2'],
   convertId: true,
   appendToTable: false,
   rowsPerBatch: 10000
@@ -70,3 +70,18 @@ motore.import({
   // Import log object
 });
 ```
+
+## FAQs
+
+**Will my data get overwritten if the database already exists?**
+
+No. `import` expects your source database to exist and your target database **not** to exists. If you want to append the tables to a database, you can pass along the `--append` option, which will first check if no tables would get overwritten, and then creates the tables in the database.
+
+**Will primary indexes get imported as primary indexes?**
+
+Yes. `import` imports the primary index from and to the databases.
+
+**Will secondary indexes get imported?
+
+No. Importing secondary indexes is not supported.
+
