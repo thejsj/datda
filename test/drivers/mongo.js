@@ -48,14 +48,21 @@ describe('MongoDB', function () {
 
   // Connect to Mongo
   before(function (done) {
-    mongo = new MongoDriver({
-      host: 'localhost',
-      port: 27017,
-      db: 'motoreTest'
-    }, {
-      sourceOrTarget: 'source'
-    });
-    mongo.connect()
+    return mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
+      .then(function (db) {
+        db = Promise.promisifyAll(db);
+        return db.createCollectionAsync('table1');
+      })
+      .then(function () {
+        mongo = new MongoDriver({
+          host: 'localhost',
+          port: 27017,
+          db: 'motoreTest'
+        }, {
+          sourceOrTarget: 'source'
+        });
+        return mongo.connect();
+      })
      .then(done.bind(null, null));
   });
 
@@ -76,24 +83,26 @@ describe('MongoDB', function () {
         });
         conn.connect()
          .catch(function (err) {
+           err.message.should.match(/database/);
+           err.message.should.match(/exist/);
            done();
-         })
-         .then(done.bind(null, new Error('Should throw error')));
+         });
     });
 
     it('should throw an error if the it\' target and the database exists', function (done) {
       var conn = new MongoDriver({
           host: 'localhost',
           port: 27017,
-          db: 'motore'
+          db: 'motoreTest'
         }, {
           sourceOrTarget: 'target'
         });
         conn.connect()
          .catch(function (err) {
+           err.message.should.match(/database/);
+           err.message.should.match(/exist/);
            done();
-         })
-         .then(done.bind(null, new Error('Should throw error')));
+         });
     });
 
     it('should throw an error if it can\'t connect to the host', function (done) {
