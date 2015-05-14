@@ -64,11 +64,7 @@ describe('RethinkDB', function () {
 
   // Connect to Mongo
   before(function (done) {
-    rdb = new RethinkDBDriver({
-      host: 'localhost',
-      port: 28015,
-      db: 'motoreTest'
-    }, {
+    rdb = new RethinkDBDriver(connectionOpts, {
       sourceOrTarget: 'source'
     });
     rdb.connect()
@@ -81,7 +77,7 @@ describe('RethinkDB', function () {
       r.connect(connectionOpts)
         .then(function (conn) {
           return r.dbCreate('motore').run(conn)
-            .catch(function () { })
+            .catch(function () { });
         })
         .then(done.bind(null, null));
     });
@@ -145,9 +141,9 @@ describe('RethinkDB', function () {
 
   describe('getTables', function () {
 
-    var tables = ['table1', 'helloWorld' + Math.random(), ('anotherTable' + Math.random()).replace('.', '')];
+    var tables = ['table1', 'helloWorld', ('anotherTable' + Math.random()).replace('.', '')];
     before(function (done) {
-      r.connect(this.connectionOpts)
+      r.connect(connectionOpts)
         .then(function (conn) {
           return r.dbDrop(testDBName).run(conn)
             .catch(function () { })
@@ -172,10 +168,21 @@ describe('RethinkDB', function () {
 
     it('should get all the tables in the database as an object with a name property', function (done) {
       rdb.getTables()
-        .then(function (tables) {
-          _.pluck(tables, 'name').sort().should.eql(tables.sort());
+        .then(function (_tables) {
+          _.pluck(_tables, 'name').sort().should.eql(tables.sort());
           done();
         });
+    });
+
+    it('should provide the primary key for every table', function (done) {
+      rdb.getTables()
+        .then(function (_tables) {
+          var primaryIndexes = _.pluck(_tables, 'primaryIndex');
+          primaryIndexes.length.should.equal(tables.length);
+          _.unique(primaryIndexes).should.eql(['id']);
+          done();
+        })
+        .catch(done);
     });
 
     // After
