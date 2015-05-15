@@ -4,42 +4,20 @@ var q = require('q');
 var Promise = require('bluebird');
 var MongoDriver = require('../../lib/drivers/mongodb');
 var mongoClient = Promise.promisifyAll(require('mongodb').MongoClient);
+var utils = require('../utils');
 
-var dropTestDatabase = function (done) {
-  mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
-    .then(function (db) {
-      db = Promise.promisifyAll(db);
-      return db.dropDatabaseAsync();
-    })
-    .then(mongoClient.closeAsync)
-    .then(done.bind(null, null));
-};
+var testDBName = 'motoreTest';
 
-var insertTestData = function (done, data) {
-  mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
-    .then(function (db) {
-      db = Promise.promisifyAll(db);
-      return db.dropDatabaseAsync()
-        .then(function () {
-          return db.createCollectionAsync('table1')
-           .then(function () {
-             return db.collectionAsync('table1');
-           });
-        })
-        .then(function (collection) {
-          collection = Promise.promisifyAll(collection);
-          return collection.insertAsync( data || [
-            { number: 1 },
-            { number: 2 },
-            { number: 3 }
-          ])
-          .then(function () {
-            return collection.createIndexAsync({ exampleIndex: 'text' });
-          });
-        });
-    })
-    .then(mongoClient.closeAsync)
-    .then(done.bind(null, null));
+var testData = [
+  { number: 1 },
+  { number: 2 },
+  { number: 3 }
+];
+
+var table1Config = {
+  'name': 'table1',
+  'primaryIndex': '_id',
+  'secondaryIndexes': []
 };
 
 describe('MongoDB', function () {
@@ -48,7 +26,7 @@ describe('MongoDB', function () {
 
   // Connect to Mongo
   before(function (done) {
-    return mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
+    return mongoClient.connectAsync('mongodb://localhost:27017/' + testDBName)
       .then(function (db) {
         db = Promise.promisifyAll(db);
         return db.createCollectionAsync('table1');
@@ -57,7 +35,7 @@ describe('MongoDB', function () {
         mongo = new MongoDriver({
           host: 'localhost',
           port: 27017,
-          db: 'motoreTest'
+          db: testDBName
         }, {
           sourceOrTarget: 'source'
         });
@@ -93,7 +71,7 @@ describe('MongoDB', function () {
       var conn = new MongoDriver({
           host: 'localhost',
           port: 27017,
-          db: 'motoreTest'
+          db: testDBName
         }, {
           sourceOrTarget: 'target'
         });
@@ -127,7 +105,7 @@ describe('MongoDB', function () {
 
     var tables = ['table1', 'helloWorld' + Math.random(), 'anotherTable' + Math.random()];
     before(function (done) {
-      mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
+      mongoClient.connectAsync('mongodb://localhost:27017/' + testDBName)
         .then(function (db) {
           db = Promise.promisifyAll(db);
           return db.dropDatabaseAsync()
@@ -168,7 +146,7 @@ describe('MongoDB', function () {
     });
 
     // After
-    after(dropTestDatabase);
+    after(utils.dropMongoDBTestDatabase(testDBName));
   });
 
   describe('createTables', function () {
@@ -189,14 +167,31 @@ describe('MongoDB', function () {
         })
         .catch(done);
     });
+
+    it('should throw an error if primary key that is not `_id` is passed', function (done) {
+      var tables = [
+        { name: 'not_id', primaryKey: 'not_id' },
+      ];
+      mongo.createTables(tables)
+        .catch(function (err) {
+          err.should.be.a.Error;
+          err.message.should.be.a.String;
+          err.message.should.match(/mongodb/i);
+          err.message.should.match(/primary/i);
+          err.message.should.match(/_id/i);
+          done();
+        });
+    });
+
+
   });
 
   describe('getNumberOfRows', function () {
 
-    before(insertTestData);
+    before(utils.insertMongoDBTestData(testDBName, testData));
 
     it('should get the number of rows in a collection', function (done) {
-      mongo.getNumberOfRows('table1')
+      mongo.getNumberOfRows(table1Config)
         .then(function (numOfRows) {
           numOfRows.should.equal(3);
           done();
@@ -204,15 +199,15 @@ describe('MongoDB', function () {
         .catch(done);
     });
 
-    after(dropTestDatabase);
+    after(utils.dropMongoDBTestDatabase(testDBName));
   });
 
   describe('getRows', function () {
 
-    before(insertTestData);
+    before(utils.insertMongoDBTestData(testDBName, testData));
 
     it('should get the rows in a collection', function (done) {
-      mongo.getRows('table1', 2, 0)
+      mongo.getRows(table1Config, 2, 0)
         .then(function (rows) {
           rows.should.be.an.Array;
           rows.length.should.equal(2);
@@ -221,17 +216,17 @@ describe('MongoDB', function () {
         });
     });
 
-    after(dropTestDatabase);
+    after(utils.dropMongoDBTestDatabase(testDBName));
   });
 
   describe('insertRows', function () {
 
-    before(insertTestData);
+    before(utils.insertMongoDBTestData(testDBName, testData));
 
     it('should insert the rows into the collection', function (done) {
-      mongo.insertRows('table1', [{ hello: 1 }, { hello: 2 }])
+      mongo.insertRows(table1Config, [{ hello: 1 }, { hello: 2 }])
        .then(function () {
-         return mongo.getRows('table1', 10, 0);
+         return mongo.getRows(table1Config, 10, 0);
        })
        .then(function (rows) {
          rows.length.should.equal(5);
@@ -240,7 +235,7 @@ describe('MongoDB', function () {
        });
     });
 
-    after(dropTestDatabase);
+    after(utils.dropMongoDBTestDatabase(testDBName));
   });
 });
 

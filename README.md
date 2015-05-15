@@ -36,7 +36,7 @@ motore
 
   --collections/--tables table_name,collection_name
                               // Limit the collections/tables you wish to import from the database (Default: All tables)
-  --convert_id                // Convert Mongos’s _id to RethinkDB’s id and vice versa (Default: false)
+  --convert_id                // Convert Mongos’s _id to RethinkDB’s id and vice versa (Default: true)
   --append_to_table           // Append to table if table already exists (Default: false)
   --rows_per_batch            // Number of documents/rows per insert query (Default: 1000)
   --log                       // Log output

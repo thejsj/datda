@@ -4,58 +4,23 @@ var q = require('q');
 var Promise = require('bluebird');
 var RethinkDBDriver = require('../../lib/drivers/rethinkdb');
 var r = require('rethinkdb');
+var utils = require('../utils');
 
-var testDBName = 'motoreTest';
-var defaultData = [
+var testData = [
   { number: 1 },
   { number: 2 },
   { number: 3 }
 ];
+
 var connectionOpts = {
   host: 'localhost',
   port: 28015,
   db: 'motoreTest'
 };
 
-var dropTestDatabase = function (done) {
-  r.connect(this.connectionOpts)
-    .then(function (conn) {
-      r.dbDrop(testDBName).run(this.conn)
-        .catch(function () { })
-        .then(function () {
-          return conn.close();
-        })
-        .then(done.bind(null, null));
-    });
-};
-
-var insertTestData = function (done, data) {
-  if (!data) data = defaultData;
-  r.connect(this.connectionOpts)
-    .then(function (conn) {
-      r.dbDrop(testDBName).run(conn)
-        .then(function () {
-          return r.dbCreate(testDBName).run(conn);
-        })
-        .then(function () {
-          conn.use(testDBName);
-          return r.tableCreate('table1').run(conn)
-            .catch(function () { });
-        })
-        .then(function () {
-          return r.table('table1')
-            .insert(data)
-            .run(conn);
-        })
-        .then(function () {
-          return r.table('table1').indexCreate('exampleIndex').run(conn)
-            .catch(function () { });
-        })
-        .then(function () {
-          return conn.close();
-        })
-        .nodeify(done);
-    });
+var tableConfig = {
+  name: 'table1',
+  primaryKey: 'id'
 };
 
 describe('RethinkDB', function () {
@@ -64,11 +29,14 @@ describe('RethinkDB', function () {
 
   // Connect to Mongo
   before(function (done) {
-    rdb = new RethinkDBDriver(connectionOpts, {
-      sourceOrTarget: 'source'
-    });
-    rdb.connect()
-     .then(done.bind(null, null));
+    utils.insertRethinkDBTestData(connectionOpts, testData)(function () {})
+      .then(function () {
+        rdb = new RethinkDBDriver(connectionOpts, {
+          sourceOrTarget: 'source'
+        });
+        rdb.connect()
+         .then(done.bind(null, null));
+      });
   });
 
   describe('connecting', function () {
@@ -145,10 +113,10 @@ describe('RethinkDB', function () {
     before(function (done) {
       r.connect(connectionOpts)
         .then(function (conn) {
-          return r.dbDrop(testDBName).run(conn)
+          return r.dbDrop(connectionOpts.db).run(conn)
             .catch(function () { })
             .then(function () {
-              return r.dbCreate(testDBName).run(conn);
+              return r.dbCreate(connectionOpts.db).run(conn);
             })
             .then(function () {
               return q.all(tables.map(function (table) {
@@ -186,7 +154,7 @@ describe('RethinkDB', function () {
     });
 
     // After
-    after(dropTestDatabase);
+    after(utils.dropRethinkDBTestDatabase(connectionOpts));
   });
 
   describe('createTables', function () {
@@ -207,14 +175,30 @@ describe('RethinkDB', function () {
         })
         .catch(done);
     });
+
+    it('should create tables with an primaryKey that\'s not id', function (done) {
+      var tables = [
+        { name: 'not_id', primaryKey: 'not_id' }
+      ];
+      rdb.createTables(tables)
+        .then(function () {
+          return rdb.getTables();
+        })
+        .then(function (_tables) {
+          _.pluck(tables, 'name').should.eql(['not_id']);
+          _.pluck(tables, 'primaryKey').should.eql(['not_id']);
+          done();
+        })
+        .catch(done);
+    });
   });
 
   describe('getNumberOfRows', function () {
 
-    before(insertTestData);
+    before(utils.insertRethinkDBTestData(connectionOpts, testData));
 
     it('should get the number of rows in a collection', function (done) {
-      rdb.getNumberOfRows('table1')
+      rdb.getNumberOfRows(tableConfig)
         .then(function (numOfRows) {
           numOfRows.should.equal(3);
           done();
@@ -222,15 +206,15 @@ describe('RethinkDB', function () {
         .catch(done);
     });
 
-    after(dropTestDatabase);
+    after(utils.dropRethinkDBTestDatabase(connectionOpts));
   });
 
   describe('getRows', function () {
 
-    before(insertTestData);
+    before(utils.insertRethinkDBTestData(connectionOpts, testData));
 
     it('should get the rows in a collection', function (done) {
-      rdb.getRows('table1', 3, 0)
+      rdb.getRows(tableConfig, 3, 0)
         .then(function (rows) {
           rows.should.be.an.Array;
           rows.length.should.equal(3);
@@ -240,17 +224,17 @@ describe('RethinkDB', function () {
         });
     });
 
-    after(dropTestDatabase);
+    after(utils.dropRethinkDBTestDatabase(connectionOpts));
   });
 
   describe('insertRows', function () {
 
-    before(insertTestData);
+    before(utils.insertRethinkDBTestData(connectionOpts, testData));
 
     it('should insert the rows into the collection', function (done) {
-      rdb.insertRows('table1', [{ hello: 1 }, { hello: 2 }])
+      rdb.insertRows(tableConfig, [{ hello: 1 }, { hello: 2 }])
        .then(function () {
-         return rdb.getRows('table1', 10, 0);
+         return rdb.getRows(tableConfig, 10, 0);
        })
        .then(function (rows) {
          rows.length.should.equal(5);
@@ -259,7 +243,7 @@ describe('RethinkDB', function () {
        });
     });
 
-    after(dropTestDatabase);
+    after(utils.dropRethinkDBTestDatabase(connectionOpts));
   });
 });
 
