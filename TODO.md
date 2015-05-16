@@ -18,3 +18,20 @@
 [ ] Create recursive function to get/insert documents/rows
   [ ] Add mapping function
   [ ] Map \_id to id
+[ ] Add logging
+  [ ] Add timestamps to log
+  [ ] Wrap console.log
+
+## Future Features
+
+[ ] Import only certain tables from a database
+[ ] Append tables to database instead of making sure the database doesn't exist
+
+```
+  --collections/--tables table_name,collection_name
+                              // Limit the collections/tables you wish to import from the database (Default: All tables)
+  --convert_id                // Convert Mongos’s _id to RethinkDB’s id and vice versa (Default: true)
+  --append_to_table           // Append to table if table already exists (Default: false)
+  --log                       // Log output
+  --help                      // Help
+```

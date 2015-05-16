@@ -3,45 +3,41 @@ var r = require('rethinkdb');
 var Promise = require('bluebird');
 var mongoClient = Promise.promisifyAll(require('mongodb').MongoClient);
 
-var mongoDriver = require('../../lib/drivers/mongodb');
-var rethinkdbDriver = require('../../lib/drivers/rethinkdb');
-
-var dbName = 'mongoDBToRethinkDB';
-
-var dropMongoTestDatabase = function (done) {
-  mongoClient.connectAsync('mongodb://localhost:27017/' + dbName)
-    .then(function (db) {
-      db = Promise.promisifyAll(db);
-      return db.dropDatabaseAsync();
-    })
-    .then(mongoClient.closeAsync)
-    .then(done.bind(null, null));
-};
-
+var utils = require('../utils');
+var mtrImport = require('../../lib/motore');
 
 describe('MongoToRethinkDB', function () {
 
-  before(function () {
-    // Insert data into MongoDB
-    mongoClient.connectAsync('mongodb://localhost:27017/motoreTest')
-      .then(function (db) {
-        db = Promise.promisifyAll(db);
-        return db.dropDatabaseAsync()
-          .then(function () {
-            return db.createCollectionAsync('table1')
-             .then(function () {
-               return db.collectionAsync('table1');
-             });
-          })
-          .then(function (collection) {
-            collection = Promise.promisifyAll(collection);
-            return collection.insertAsync(testData);
-          });
+  before(function (done) {
+    return utils.insertMongoDBTestData(utils.testDBName, testData)(function () { })
+      .then(function () {
+        return utils.dropRethinkDBTestDatabase(utils.rethinkDBConnectionOpts)(function () { });
       })
-      .then(mongoClient.closeAsync)
-      .then(done.bind(null, null));
+      .nodeify(done);
   });
 
+  it('should insert the test data', function (done) {
+    this.timeout(15000);
+    mtrImport({
+      source: 'mongodb',
+      target: 'rethinkdb',
+      db: utils.testDBName,
+      rethinkdb: utils.rethinkDBConnectionOpts,
+      mongodb: utils.mongoDBConnectionOpts
+    })
+    .then(function (importLog) {
+      // Check that RethinkDB has all the right data
+      console.log(importLog);
+      done();
+    })
+    .catch(done);
+  });
 
-  after(dropDatabase);
+  after(function (done) {
+    return utils.dropMongoDBTestDatabase(utils.testDBName)(function () { })
+      .then(function () {
+        return utils.dropRethinkDBTestDatabase(utils.rethinkDBConnectionOpts)(function () { });
+      })
+      .nodeify(done);
+  });
 });

@@ -1,5 +1,5 @@
 {
-  "name": "motore",
+  "name": "mtr",
   "version": "0.0.1",
   "description": "Import MongoDB database to and from RethinkDB",
   "main": "lib/motore.js",
