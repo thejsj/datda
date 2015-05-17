@@ -27,7 +27,6 @@ describe('MongoToRethinkDB', function () {
     })
     .then(function (importLog) {
       // Check that RethinkDB has all the right data
-      console.log(importLog);
       done();
     })
     .catch(done);
@@ -36,7 +35,9 @@ describe('MongoToRethinkDB', function () {
   after(function (done) {
     return utils.dropMongoDBTestDatabase(utils.testDBName)(function () { })
       .then(function () {
-        return utils.dropRethinkDBTestDatabase(utils.rethinkDBConnectionOpts)(function () { });
+        // Don't drop it for now
+     //   return utils.dropRethinkDBTestDatabase(utils.rethinkDBConnectionOpts)(function () { });
+        return true;
       })
       .nodeify(done);
   });
