@@ -15,15 +15,16 @@
   [x] MongoDB should throw an error when not passed `_id` as an index
   [x] MongoDB's `\_id`s should always be converted to `id`
   [x] RethinkDB's primary key should always be converted to `_id`
-[ ] Create recursive function to get/insert documents/rows
+[x] Create recursive function to get/insert documents/rows
   [ ] Add mapping function
   [ ] Map \_id to id
-[ ] Add logging
-  [ ] Add timestamps to log
-  [ ] Wrap console.log
+[x] Add logging
+  [x] Add timestamps to log
+  [x] Wrap console.log
 
 ## Future Features
 
+[ ] Change get/insert to stream
 [ ] Import only certain tables from a database
 [ ] Append tables to database instead of making sure the database doesn't exist
 

@@ -35,6 +35,7 @@ motore
   --rdb_host host             // (Default: ‘localhost’)
 
   --rows_per_batch            // Number of documents/rows per insert query (Default: 1000)
+  --log                       // Wheter to log out important events and progress (Default: false)
 ```
 
 ### Code
