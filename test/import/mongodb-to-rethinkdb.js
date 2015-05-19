@@ -103,12 +103,10 @@ describe('MongoToRethinkDB', function () {
     .nodeify(done);
   });
 
-  after(function (done) {
+  afterEach(function (done) {
     return utils.dropMongoDBTestDatabase(utils.testDBName)(function () { })
       .then(function () {
-        // Don't drop it for now
-     //   return utils.dropRethinkDBTestDatabase(utils.rethinkDBConnectionOpts)(function () { });
-        return true;
+        return utils.dropRethinkDBTestDatabase(utils.rethinkDBConnectionOpts)(function () { });
       })
       .nodeify(done);
   });

@@ -33,6 +33,10 @@
 [ ] Primary Keys
   [ ] Fix use case for `_id` and `id`
   [ ] Use other primary key as primary key in mapping
+[ ] Improve README
+ [ ] Explain that the primary index gets imported, but not the secondary indexes
+ [ ] Give examples of the CLI
+ [ ] Explain that `id` gets replaced with `_id`
 
 ## Future Features
 
