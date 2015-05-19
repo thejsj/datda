@@ -2,9 +2,10 @@
   "name": "mtr",
   "version": "0.0.1",
   "description": "Import MongoDB database to and from RethinkDB",
-  "main": "lib/motore.js",
+  "main": "lib/mtr.js",
   "dependencies": {
     "bluebird": "^2.9.25",
+    "cli": "^0.6.6",
     "lodash": "^3.8.0",
     "mongo-client": "^0.2.1",
     "mongodb": "^2.0.28",
@@ -13,9 +14,12 @@
     "rethinkdb-init": "^0.0.3",
     "should": "^6.0.1"
   },
+  "prferGlobal": true,
+  "bin": {
+    "mtr": "bin/mtr.js"
+  },
   "devDependencies": {
-    "mocha": "^2.2.4",
-    "q": "^1.3.0"
+    "mocha": "^2.2.4"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha ./test"

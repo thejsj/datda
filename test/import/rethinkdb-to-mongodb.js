@@ -6,7 +6,7 @@ var mongoClient = Promise.promisifyAll(require('mongodb').MongoClient);
 
 var testData = require('../data.json');
 var utils = require('../utils');
-var mtrImport = require('../../lib/motore');
+var mtrImport = require('../../lib/mtr');
 
 describe('RethinkDBToMongoDB', function () {
 

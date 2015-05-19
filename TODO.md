@@ -16,11 +16,23 @@
   [x] MongoDB's `\_id`s should always be converted to `id`
   [x] RethinkDB's primary key should always be converted to `_id`
 [x] Create recursive function to get/insert documents/rows
-  [ ] Add mapping function
-  [ ] Map \_id to id
+  [x] Add mapping function
+  [x] Map \_id to id
 [x] Add logging
   [x] Add timestamps to log
   [x] Wrap console.log
+[ ] Testing
+  [ ] Test with 20,000+ rows
+  [ ] Test with different primary keys (email)
+  [ ] What happens if you're importing something into RethinkDB and it has an `id` and a `_id`
+[ ] CLI
+  [x] Finish CLI
+  [x] Test CLI
+  [ ] Add progress bars for each table
+  [ ] Add `.info`, `.warn`, etc
+[ ] Primary Keys
+  [ ] Fix use case for `_id` and `id`
+  [ ] Use other primary key as primary key in mapping
 
 ## Future Features
 

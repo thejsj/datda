@@ -22,20 +22,20 @@ npm install motore
 
 ```
 motore
-  --source [mongodb/rethinkdb]  // Specify wether to import from MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `mongo`)
-  --target [mongodb/rethinkdb]  // Specify wether to import to MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `rethinkdb`)
-  --db                        // Name of database (Can be overwritten by `rdb_db` and `mongo_db`)
+  --source [mongodb/rethinkdb]  // Specify whether to import from MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `mongo`)
+  --target [mongodb/rethinkdb]  // Specify whether to import to MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `rethinkdb`)
+  --db                          // Name of database (Can be overwritten by `rdb_db` and `mongo_db`)
 
-  --mongo_db name_of_database
-  --mongo_host host           // (Default: 27017)
-  --mongo_port mongoport      // (Defulat: ‘localhost’)
+  --mdb_db name_of_database
+  --mdb_host host             // (Default: 27017)
+  --mdb_port mongoport        // (Defulat: ‘localhost’)
 
   --rdb_db_ name_of_database
-  --rdb_port port_number      // (Default: 28015)
-  --rdb_host host             // (Default: ‘localhost’)
+  --rdb_port port_number        // (Default: 28015)
+  --rdb_host host               // (Default: ‘localhost’)
 
-  --rows_per_batch            // Number of documents/rows per insert query (Default: 1000)
-  --log                       // Wheter to log out important events and progress (Default: false)
+  --rows_per_batch              // Number of documents/rows per insert query (Default: 1000)
+  --log                         // Wheter to log out important events and progress (Default: false)
 ```
 
 ### Code
