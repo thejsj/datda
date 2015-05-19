@@ -20,7 +20,7 @@ exports.mongoDBConnectionOpts = mongoDBConnectionOpts;
 
 exports.dropMongoDBTestDatabase = function (dbName) {
   return function (done) {
-    return mongoClient.connectAsync('mongodb://localhost:27017/dbName')
+    return mongoClient.connectAsync('mongodb://localhost:27017/' + testDBName)
       .then(function (db) {
         db = Promise.promisifyAll(db);
         return db.dropDatabaseAsync();
