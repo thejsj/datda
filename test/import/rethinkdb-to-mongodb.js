@@ -103,6 +103,48 @@ describe('RethinkDBToMongoDB', function () {
     .nodeify(done);
   });
 
+  it('should import the data by batches correctly', function (done) {
+    this.timeout(15000);
+    return mtrImport({
+      source: 'rethinkdb',
+      target: 'mongodb',
+      db: utils.testDBName,
+      rethinkdb: utils.rethinkDBConnectionOpts,
+      mongodb: utils.mongoDBConnectionOpts,
+      rowsPerBatch: 1
+    })
+    .then(function () {
+      return r.connect(utils.rethinkDBConnectionOpts)
+        .then(function (conn) {
+          return r.db(utils.rethinkDBConnectionOpts.db)
+            .table('table1')
+            .count()
+            .run(conn)
+            .then(function (count) {
+              return mongoClient.connectAsync('mongodb://localhost:27017/' + utils.testDBName)
+                .then(function (db) {
+                  db = Promise.promisifyAll(db);
+                  return db.collectionAsync('table1');
+                })
+                .then(function (collection) {
+                  collection = Promise.promisifyAll(collection);
+                  return collection.findAsync({});
+                })
+                .then(function (cursor) {
+                  cursor = Promise.promisifyAll(cursor);
+                  return cursor.toArrayAsync();
+                })
+                .then(function (docs) {
+                  count.should.equal(testData.length);
+                  count.should.equal(docs.length);
+                });
+            });
+        });
+    })
+    .nodeify(done);
+  });
+
+
   afterEach(function (done) {
     return utils.dropRethinkDBTestDatabase(utils.rethinkDBConnectionOpts)(function () { })
       .then(function () {
