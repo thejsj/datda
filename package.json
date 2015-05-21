@@ -24,7 +24,9 @@
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha ./test",
     "test-clients": "./node_modules/mocha/bin/mocha ./test/clients",
-    "test-import": "./node_modules/mocha/bin/mocha ./test/import"
+    "test-import": "./node_modules/mocha/bin/mocha ./test/import",
+    "test-import-rethinkdb": "./node_modules/mocha/bin/mocha ./test/import/rethinkdb-to-mongodb.js",
+    "test-import-mongodb": "./node_modules/mocha/bin/mocha ./test/import/mongodb-to-rethindkb.js"
   },
   "repository": {
     "type": "git",
