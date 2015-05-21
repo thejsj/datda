@@ -132,7 +132,7 @@ No. Mtr expects your source database to exist and your target database **not** t
 
 Yes. Mtr imports the primary index from and to the database. If the source database is MongoDB, it will import the `_id` into `id`, deleting a preexisting `id` property. If RethinkDB is the source database, it will import whatever the primaryIndex is in that table into the `_id` property in MongoDB, deleting anything previously in the `_id` property.
 
-**Will secondary indexes get imported?
+**Will secondary indexes get imported?**
 
 No. Importing secondary indexes is not supported.
 
