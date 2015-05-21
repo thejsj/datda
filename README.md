@@ -1,19 +1,19 @@
 # mtr
 
-Import MongoDB database and tables into RethinkDB. Import RethinkDB databases into MongoDB.
+Import MongoDB database into RethinkDB. Import RethinkDB databases into MongoDB.
 
-This module helps you easily import databases to/from MongoDB to RethinkDB. The implementation is very simple. mtr merely gets all the collecitons/tables in your database and gets all the documents/rows in that collectiont/table and inserts them into the other database.
+This module helps you easily import MongoDB database into RethinkDB and back. The implementation is very simple. mtr merely gets all the collecitons/tables in your database and gets all the documents/rows in that collectiont/table and inserts them into the other database. The beauty of JSON document stores.
 
 ## Install
 
 To use the CLI:
 ```
-npm install -g motore
+npm install -g mtr
 ```
 
 To use in your node app:
 ```
-npm install motore
+npm install mtr
 ```
 
 ## API
@@ -21,29 +21,48 @@ npm install motore
 ### CLI
 
 ```
-motore
-  --source [mongodb/rethinkdb]  // Specify whether to import from MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `mongo`)
-  --target [mongodb/rethinkdb]  // Specify whether to import to MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `rethinkdb`)
-  --db                          // Name of database (Can be overwritten by `rdb_db` and `mongo_db`)
+mtr
+  --source [mongodb/rethinkdb] // Specify whether to import from MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `mongo`)
+  --target [mongodb/rethinkdb] // Specify whether to import to MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `rethinkdb`)
+  --db                         // Name of database (Can be overwritten by `rdb_db` and `mongo_db`)
 
   --mdb_db name_of_database
-  --mdb_host host             // (Default: 27017)
-  --mdb_port mongoport        // (Defulat: ‘localhost’)
+  --mdb_host host              // (Default: 27017)
+  --mdb_port mongoport         // (Defulat: ‘localhost’)
 
   --rdb_db_ name_of_database
-  --rdb_port port_number        // (Default: 28015)
-  --rdb_host host               // (Default: ‘localhost’)
+  --rdb_port port_number       // (Default: 28015)
+  --rdb_host host              // (Default: ‘localhost’)
 
-  --rows_per_batch              // Number of documents/rows per insert query (Default: 1000)
-  --log                         // Wheter to log out important events and progress (Default: false)
+  --rows_per_batch             // Number of documents/rows per insert query (Default: 1000)
+  --log                        // Wheter to log out important events and progress (Default: false)
 ```
 
-### Code
+### Examples
+
+Importing the `hello` database from MongoDB into RethinkDB
+```
+mtr --db hello
+```
+
+Importing the `hello_mongo` database from MongoDB into a database called `hello_rethinkb` in RethinkDB.
 
 ```
-var motore = require('motore');
+mtr --mdb_db hello_mongo --rdb_db hello_rethinkdb
+```
 
-motore.import({
+Importing the `hello` database from a remote RethinkDB instance into a local MongoDB instance.
+
+```
+mtr --mdb_host 123.123.123.123 --db hello --source rethinkdb --target mongodb
+```
+
+### Node.js
+
+```
+var mtr = require('mtr');
+
+mtr({
   source: 'mongodb',
   target: 'rethinkdb',
   mongo: {
@@ -55,23 +74,63 @@ motore.import({
     host: 'localhost',
     port: 28015,
     db: 'db'
-  },
-  rowsPerBatch: 10000
+  }
 })
-.then(function (log) {
+.then(function (importLog) {
   // Import log object
 });
+```
+
+### Examples
+
+Importing the `hello` database from MongoDB into RethinkDB
+```
+mtr({
+  db: 'hello'
+})
+.then(function() { });
+```
+
+Importing the `hello_mongo` database from MongoDB into a database called `hello_rethinkb` in RethinkDB.
+
+```
+mtr({
+  mongodb: {
+    db: 'hello_mongo'
+  },
+  rethinkdb: {
+    db: 'hello_rethinkdb'
+  }
+})
+.then(function() { });
+```
+
+Importing the `hello` database from a remote RethinkDB instance into a local MongoDB instance.
+
+```
+mtr({
+  source: 'rethinkdb',
+  target: 'mongodb',
+  db: 'hello',
+  mongodb: {
+    host: '123.123.123.123'
+  },
+  rethinkdb: {
+    db: 'hello_rethinkdb'
+  }
+})
+.then(function() { });
 ```
 
 ## FAQs
 
 **Will my data get overwritten if the database already exists?**
 
-No. `import` expects your source database to exist and your target database **not** to exists. If you want to append the tables to a database, you can pass along the `--append` option, which will first check if no tables would get overwritten, and then creates the tables in the database.
+No. Mtr expects your source database to exist and your target database **not** to exist. It will created the database automatically.
 
 **Will primary indexes get imported as primary indexes?**
 
-Yes. `import` imports the primary index from and to the databases.
+Yes. Mtr imports the primary index from and to the database. If the source database is MongoDB, it will import the `_id` into `id`, deleting a preexisting `id` property. If RethinkDB is the source database, it will import whatever the primaryIndex is in that table into the `_id` property in MongoDB, deleting anything previously in the `_id` property.
 
 **Will secondary indexes get imported?
 
