@@ -16,7 +16,7 @@ var testData = [
 
 var table1Config = {
   'name': 'table1',
-  'primaryIndex': '_id',
+  'primaryKey': '_id',
   'secondaryIndexes': []
 };
 
@@ -137,9 +137,9 @@ describe('MongoDB', function () {
     it('should provide the primary key for every table', function (done) {
       mongo.getTables()
         .then(function (collections) {
-          var primaryIndexes = _.pluck(collections, 'primaryIndex');
-          primaryIndexes.length.should.equal(collections.length);
-          _.unique(primaryIndexes).should.eql(['_id']);
+          var primaryKeys = _.pluck(collections, 'primaryKey');
+          primaryKeys.length.should.equal(collections.length);
+          _.unique(primaryKeys).should.eql(['_id']);
           done();
         })
         .catch(done);

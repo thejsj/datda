@@ -145,9 +145,9 @@ describe('RethinkDB', function () {
     it('should provide the primary key for every table', function (done) {
       rdb.getTables()
         .then(function (_tables) {
-          var primaryIndexes = _.pluck(_tables, 'primaryIndex');
-          primaryIndexes.length.should.equal(tables.length);
-          _.unique(primaryIndexes).should.eql(['id']);
+          var primaryKeys = _.pluck(_tables, 'primaryKey');
+          primaryKeys.length.should.equal(tables.length);
+          _.unique(primaryKeys).should.eql(['id']);
           done();
         })
         .catch(done);

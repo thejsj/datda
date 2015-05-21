@@ -144,6 +144,62 @@ describe('RethinkDBToMongoDB', function () {
     .nodeify(done);
   });
 
+  describe('Primary Keys', function () {
+
+    beforeEach(function (done) {
+      return utils.insertRethinkDBTestData(utils.rethinkDBConnectionOpts, testData, 'permalink')(function () { })
+        .then(function () {
+          return utils.dropMongoDBTestDatabase(utils.testDBName)(function () { });
+        })
+        .nodeify(done);
+    });
+
+    it('should map a primaryKey that is not `id` to the `_id` property', function (done) {
+      this.timeout(15000);
+      return mtrImport({
+        source: 'rethinkdb',
+        target: 'mongodb',
+        db: utils.testDBName,
+        rethinkdb: utils.rethinkDBConnectionOpts,
+        mongodb: utils.mongoDBConnectionOpts
+      })
+      .then(function () {
+        return r.connect(utils.rethinkDBConnectionOpts)
+          .then(function (conn) {
+            return r.db(utils.rethinkDBConnectionOpts.db)
+              .table('table1')('permalink')
+              .coerceTo('array')
+              .run(conn)
+              .then(function (permalinks) {
+                return mongoClient.connectAsync('mongodb://localhost:27017/' + utils.testDBName)
+                  .then(function (db) {
+                    db = Promise.promisifyAll(db);
+                    return db.collectionAsync('table1');
+                  })
+                  .then(function (collection) {
+                    collection = Promise.promisifyAll(collection);
+                    return collection.findAsync({});
+                  })
+                  .then(function (cursor) {
+                    cursor = Promise.promisifyAll(cursor);
+                    return cursor.toArrayAsync();
+                  })
+                  .then(function (docs) {
+                    var _ids = docs.map(function (doc) {
+                      return doc._id.toString();
+                    });
+                    permalinks.length.should.equal(testData.length);
+                    permalinks.length.should.equal(_ids.length);
+                    permalinks.sort().should.eql(_ids.sort());
+                  });
+              });
+          });
+      })
+      .nodeify(done);
+  });
+
+
+  });
 
   afterEach(function (done) {
     return utils.dropRethinkDBTestDatabase(utils.rethinkDBConnectionOpts)(function () { })

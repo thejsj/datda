@@ -25,6 +25,7 @@ exports.dropMongoDBTestDatabase = function (dbName) {
         db = Promise.promisifyAll(db);
         return db.dropDatabaseAsync();
       })
+      .catch(function (err) { console.log(err); })
       .then(mongoClient.closeAsync)
       .then(done.bind(null, null));
   };
@@ -66,7 +67,7 @@ exports.insertMongoDBTestData = function (testDBName, testData) {
   };
 };
 
-exports.insertRethinkDBTestData = function (connectionOpts, data) {
+exports.insertRethinkDBTestData = function (connectionOpts, data, primaryKey) {
   return function (done) {
     return r.connect(connectionOpts)
       .then(function (conn) {
@@ -77,7 +78,7 @@ exports.insertRethinkDBTestData = function (connectionOpts, data) {
           })
           .then(function () {
             conn.use(connectionOpts.db);
-            return r.tableCreate('table1').run(conn)
+            return r.tableCreate('table1', { 'primaryKey': (primaryKey || 'id' )}).run(conn)
               .catch(function () { });
           })
           .then(function () {
