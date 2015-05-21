@@ -1,8 +1,8 @@
-# Motore
+# mtr
 
 Import MongoDB database and tables into RethinkDB. Import RethinkDB databases into MongoDB.
 
-This module helps you easily import databases to/from MongoDB to RethinkDB. The implementation is very simple. Motore merely gets all the collecitons/tables in your database and gets all the documents/rows in that collectiont/table and inserts them into the other database.
+This module helps you easily import databases to/from MongoDB to RethinkDB. The implementation is very simple. mtr merely gets all the collecitons/tables in your database and gets all the documents/rows in that collectiont/table and inserts them into the other database.
 
 ## Install
 

@@ -22,7 +22,9 @@
     "mocha": "^2.2.4"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha ./test"
+    "test": "./node_modules/mocha/bin/mocha ./test",
+    "test-drivers": "./node_modules/mocha/bin/mocha ./test/drivers",
+    "test-import": "./node_modules/mocha/bin/mocha ./test/import"
   },
   "repository": {
     "type": "git",
