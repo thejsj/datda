@@ -2,7 +2,7 @@ require('should');
 var _ = require('lodash');
 var q = require('q');
 var Promise = require('bluebird');
-var RethinkDBDriver = require('../../lib/drivers/rethinkdb');
+var RethinkDBDriver = require('../../lib/clients/rethinkdb');
 var r = require('rethinkdb');
 var utils = require('../utils');
 

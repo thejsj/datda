@@ -2,7 +2,7 @@ require('should');
 var _ = require('lodash');
 var q = require('q');
 var Promise = require('bluebird');
-var MongoDriver = require('../../lib/drivers/mongodb');
+var MongoDriver = require('../../lib/clients/mongodb');
 var mongoClient = Promise.promisifyAll(require('mongodb').MongoClient);
 var utils = require('../utils');
 

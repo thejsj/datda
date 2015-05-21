@@ -22,7 +22,7 @@
   [x] Add timestamps to log
   [x] Wrap console.log
 [ ] Testing
-  [ ] Test with 20,000+ rows
+  [x] Test with 20,000+ rows
   [ ] Test with different primary keys (email)
   [ ] What happens if you're importing something into RethinkDB and it has an `id` and a `_id`
 [ ] CLI
@@ -33,10 +33,10 @@
 [ ] Primary Keys
   [ ] Fix use case for `_id` and `id`
   [ ] Use other primary key as primary key in mapping
-[ ] Improve README
- [ ] Explain that the primary index gets imported, but not the secondary indexes
- [ ] Give examples of the CLI
- [ ] Explain that `id` gets replaced with `_id`
+[x] Improve README
+ [x] Explain that the primary index gets imported, but not the secondary indexes
+ [x] Give examples of the CLI
+ [x] Explain that `id` gets replaced with `_id`
 
 ## Future Features
 
