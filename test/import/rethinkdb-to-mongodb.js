@@ -6,7 +6,7 @@ var mongoClient = Promise.promisifyAll(require('mongodb').MongoClient);
 
 var testData = require('../data.json');
 var utils = require('../utils');
-var mtrImport = require('../../lib/mtr');
+var m2rImport = require('../../lib/m2r');
 
 describe('RethinkDBToMongoDB', function () {
 
@@ -20,7 +20,7 @@ describe('RethinkDBToMongoDB', function () {
 
   it('should insert the test data and return a log object', function (done) {
     this.timeout(15000);
-    mtrImport({
+    m2rImport({
       source: 'rethinkdb',
       target: 'mongodb',
       db: utils.testDBName,
@@ -41,7 +41,7 @@ describe('RethinkDBToMongoDB', function () {
     this.timeout(15000);
     return utils.insertMongoDBTestData(utils.testDBName, testData)(function () { })
       .then(function () {
-        return mtrImport({
+        return m2rImport({
           source: 'rethinkdb',
           target: 'mongodb',
           db: utils.testDBName,
@@ -61,7 +61,7 @@ describe('RethinkDBToMongoDB', function () {
 
   it('should map the `id` property to `_id`', function (done) {
     this.timeout(15000);
-    return mtrImport({
+    return m2rImport({
       source: 'rethinkdb',
       target: 'mongodb',
       db: utils.testDBName,
@@ -105,7 +105,7 @@ describe('RethinkDBToMongoDB', function () {
 
   it('should import the data by batches correctly', function (done) {
     this.timeout(15000);
-    return mtrImport({
+    return m2rImport({
       source: 'rethinkdb',
       target: 'mongodb',
       db: utils.testDBName,
@@ -156,7 +156,7 @@ describe('RethinkDBToMongoDB', function () {
 
     it('should map a primaryKey that is not `id` to the `_id` property', function (done) {
       this.timeout(15000);
-      return mtrImport({
+      return m2rImport({
         source: 'rethinkdb',
         target: 'mongodb',
         db: utils.testDBName,

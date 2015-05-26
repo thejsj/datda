@@ -38,6 +38,7 @@
  [x] Explain that the primary index gets imported, but not the secondary indexes
  [x] Give examples of the CLI
  [x] Explain that `id` gets replaced with `_id`
+[ ] Add options for `--r2m`
 
 ## Future Features
 

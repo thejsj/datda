@@ -6,7 +6,7 @@ var mongoClient = Promise.promisifyAll(require('mongodb').MongoClient);
 
 var testData = require('../data.json');
 var utils = require('../utils');
-var mtrImport = require('../../lib/mtr');
+var m2rImport = require('../../lib/m2r');
 
 describe('MongoToRethinkDB', function () {
 
@@ -20,7 +20,7 @@ describe('MongoToRethinkDB', function () {
 
   it('should insert the test data and return a log object', function (done) {
     this.timeout(15000);
-    mtrImport({
+    m2rImport({
       source: 'mongodb',
       target: 'rethinkdb',
       db: utils.testDBName,
@@ -41,7 +41,7 @@ describe('MongoToRethinkDB', function () {
     this.timeout(15000);
     return utils.insertRethinkDBTestData(utils.rethinkDBConnectionOpts, testData)(function () { })
       .then(function () {
-        return mtrImport({
+        return m2rImport({
           source: 'mongodb',
           target: 'rethinkdb',
           db: utils.testDBName,
@@ -61,7 +61,7 @@ describe('MongoToRethinkDB', function () {
 
   it('should map the `_id` property to `id`', function (done) {
     this.timeout(15000);
-    return mtrImport({
+    return m2rImport({
       source: 'mongodb',
       target: 'rethinkdb',
       db: utils.testDBName,
@@ -105,7 +105,7 @@ describe('MongoToRethinkDB', function () {
 
   it('should import the data by batches correctly', function (done) {
     this.timeout(15000);
-    return mtrImport({
+    return m2rImport({
       source: 'mongodb',
       target: 'rethinkdb',
       db: utils.testDBName,
