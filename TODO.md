@@ -23,8 +23,8 @@
   [x] Wrap console.log
 [ ] Testing
   [x] Test with 20,000+ rows
-  [ ] Test with different primary keys (email)
-  [ ] What happens if you're importing something into RethinkDB and it has an `id` and a `_id`
+  [x] Test with different primary keys (email)
+  [ ] Fix `Sockets Closed` message in tests
 [ ] CLI
   [x] Finish CLI
   [x] Test CLI
@@ -32,7 +32,8 @@
   [ ] Add `.info`, `.warn`, etc
 [ ] Primary Keys
   [ ] Fix use case for `_id` and `id`
-  [ ] Use other primary key as primary key in mapping
+  [ ] What happens if you're importing something into RethinkDB and it has an `id` and a `_id`
+  [x] Use other primary key as primary key in mapping
 [x] Improve README
  [x] Explain that the primary index gets imported, but not the secondary indexes
  [x] Give examples of the CLI
