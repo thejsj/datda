@@ -238,7 +238,7 @@ describe('RethinkDB', function () {
        })
        .then(function (rows) {
          rows.length.should.equal(5);
-         rows.should.containDeep([{ hello: 1 }, { hello : 2 }]);
+         rows.should.containDeep([{ 'hello': 1 }, { 'hello' : 2 }]);
          done();
        });
     });

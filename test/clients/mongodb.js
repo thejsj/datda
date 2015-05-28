@@ -41,7 +41,8 @@ describe('MongoDB', function () {
         });
         return mongo.connect();
       })
-     .then(done.bind(null, null));
+      .then(mongoClient.closeAsync)
+      .then(done.bind(null, null));
   });
 
   describe('connecting', function () {

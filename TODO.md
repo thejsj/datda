@@ -39,6 +39,7 @@
  [x] Give examples of the CLI
  [x] Explain that `id` gets replaced with `_id`
 [ ] Add options for `--r2m`
+[ ] Change name in README
 
 ## Future Features
 

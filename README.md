@@ -1,19 +1,19 @@
-# mtr
+# datda
 
-Import MongoDB database into RethinkDB. Import RethinkDB databases into MongoDB.
+Import databases between MongoDB and RethinkDB.
 
-This module helps you easily import MongoDB database into RethinkDB and back. The implementation is very simple. mtr merely gets all the collecitons/tables in your database and gets all the documents/rows in that collectiont/table and inserts them into the other database. The beauty of JSON document stores.
+This module helps you easily import MongoDB database into RethinkDB and back. The implementation is very simple. datda merely gets all the collecitons/tables in your database and gets all the documents/rows in that collectiont/table and inserts them into the other database. The beauty of JSON document stores.
 
 ## Install
 
 To use the CLI:
 ```
-npm install -g mtr
+npm install -g datda
 ```
 
 To use in your node app:
 ```
-npm install mtr
+npm install datda
 ```
 
 ## API
@@ -21,9 +21,13 @@ npm install mtr
 ### CLI
 
 ```
-mtr
+datda
+  --m2r                        // Set MongoDB as the source database and RethinkDB as the target database. Overwrites `source` and `target`.
+  --r2m                        // Set RethinkDB as the source database and MongoDB as the target database. Overwrites `source` and `target`.
+
   --source [mongodb/rethinkdb] // Specify whether to import from MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `mongo`)
   --target [mongodb/rethinkdb] // Specify whether to import to MongoDB to RethinkDB or from RethinkDB to Mongo (Default: `rethinkdb`)
+
   --db                         // Name of database (Can be overwritten by `rdb_db` and `mongo_db`)
 
   --mdb_db name_of_database
@@ -42,27 +46,27 @@ mtr
 
 Importing the `hello` database from MongoDB into RethinkDB
 ```
-mtr --db hello
+datda --m2r --db hello
 ```
 
 Importing the `hello_mongo` database from MongoDB into a database called `hello_rethinkb` in RethinkDB.
 
 ```
-mtr --mdb_db hello_mongo --rdb_db hello_rethinkdb
+datda --m2r --mdb_db hello_mongo --rdb_db hello_rethinkdb
 ```
 
 Importing the `hello` database from a remote RethinkDB instance into a local MongoDB instance.
 
 ```
-mtr --mdb_host 123.123.123.123 --db hello --source rethinkdb --target mongodb
+datda --r2m --mdb_host 123.123.123.123 --db hello
 ```
 
 ### Node.js
 
 ```
-var mtr = require('mtr');
+var datda = require('mtr');
 
-mtr({
+datda({
   source: 'mongodb',
   target: 'rethinkdb',
   mongo: {
@@ -85,7 +89,7 @@ mtr({
 
 Importing the `hello` database from MongoDB into RethinkDB
 ```
-mtr({
+datda({
   db: 'hello'
 })
 .then(function() { });
@@ -94,7 +98,7 @@ mtr({
 Importing the `hello_mongo` database from MongoDB into a database called `hello_rethinkb` in RethinkDB.
 
 ```
-mtr({
+datda({
   mongodb: {
     db: 'hello_mongo'
   },
@@ -108,7 +112,7 @@ mtr({
 Importing the `hello` database from a remote RethinkDB instance into a local MongoDB instance.
 
 ```
-mtr({
+datda({
   source: 'rethinkdb',
   target: 'mongodb',
   db: 'hello',
@@ -126,11 +130,11 @@ mtr({
 
 **Will my data get overwritten if the database already exists?**
 
-No. Mtr expects your source database to exist and your target database **not** to exist. It will created the database automatically.
+No. datda expects your source database to exist and your target database **not** to exist. It will created the database automatically.
 
 **Will primary indexes get imported as primary indexes?**
 
-Yes. Mtr imports the primary index from and to the database. If the source database is MongoDB, it will import the `_id` into `id`, deleting a preexisting `id` property. If RethinkDB is the source database, it will import whatever the primaryIndex is in that table into the `_id` property in MongoDB, deleting anything previously in the `_id` property.
+Yes. datda imports the primary index from and to the database. If the source database is MongoDB, it will import the `_id` into `id`, deleting a preexisting `id` property. If RethinkDB is the source database, it will import whatever the primaryIndex is in that table into the `_id` property in MongoDB, deleting anything previously in the `_id` property.
 
 **Will secondary indexes get imported?**
 

@@ -25,8 +25,8 @@ exports.dropMongoDBTestDatabase = function (dbName) {
         db = Promise.promisifyAll(db);
         return db.dropDatabaseAsync();
       })
-      .catch(function (err) { console.log(err); })
-      .then(mongoClient.closeAsync)
+      .catch(function (err) { console.log('!', err); })
+      //.then(mongoClient.closeAsync)
       .then(done.bind(null, null));
   };
 };
@@ -62,7 +62,7 @@ exports.insertMongoDBTestData = function (testDBName, testData) {
             return collection.insertAsync(testData);
           });
       })
-      .then(mongoClient.closeAsync)
+      //.then(mongoClient.closeAsync)
       .then(done.bind(null, null));
   };
 };

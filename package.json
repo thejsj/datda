@@ -1,8 +1,8 @@
 {
-  "name": "m2r",
+  "name": "datda",
   "version": "0.0.1",
-  "description": "MongoDB <--> RethinkDB : Import MongoDB database into RethinkDB. Import RethinkDB databases into MongoDB.",
-  "main": "lib/m2r.js",
+  "description": "MongoDB <--> RethinkDB : Import databases between MongoDB and RethinkDB.",
+  "main": "lib/datda.js",
   "dependencies": {
     "bluebird": "^2.9.25",
     "cli": "^0.6.6",
@@ -11,9 +11,9 @@
     "rethinkdb": "^2.0.0",
     "rethinkdb-init": "^0.0.3"
   },
-  "prferGlobal": true,
+  "preferGlobal": true,
   "bin": {
-    "m2r": "bin/m2r.js"
+    "datda": "bin/datda.js"
   },
   "devDependencies": {
     "mocha": "^2.2.4",
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thejsj/m2r.git"
+    "url": "https://github.com/thejsj/datda.git"
   },
   "keywords": [
     "mongo",
@@ -43,7 +43,7 @@
   "author": "thejsj",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thejsj/m2r/issues"
+    "url": "https://github.com/thejsj/datda/issues"
   },
-  "homepage": "https://github.com/thejsj/m2r"
+  "homepage": "https://github.com/thejsj/datda"
 }
