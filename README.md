@@ -64,15 +64,15 @@ datda --r2m --mdb_host 123.123.123.123 --db hello
 ### Node.js
 
 ```
-var datda = require('mtr');
+var datda = require('datda');
 
 datda({
   source: 'mongodb',
   target: 'rethinkdb',
-  mongo: {
+  mongodb: {
     host: 'localhost',
     port: 8080,
-    db: ‘db’
+    db: 'db'
   },
   rethinkdb: {
     host: 'localhost',
