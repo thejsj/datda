@@ -17,6 +17,7 @@ cli.parse({
   rdb_db:          [false, 'Name of RethinkDB database', 'string'],
   rdb_host:        [false, 'Host for RethinkDB', 'string', 'localhost'],
   rdb_port:        [false, 'Port for RethinkDB', 'number', 28015],
+  rdb_arrayLimit:  [false, 'Alternative arrayLimit for RethinkDB. Required for tables with over 100k records.', 'number', 100000],
 
   rows_per_batch: [false, 'Number of documents/rows per insert query', 'number', 1000],
   no_log:         ['l', 'Whether to log events and progress (logs by default)', 'boolean', false]
@@ -46,6 +47,7 @@ cli.main(function (args, opts) {
       host: opts.rdb_host,
       port: opts.rdb_port,
       db:   opts.rdb_db,
+      arrayLimit: opts.rdb_arrayLimit,
     },
     mongodb: {
       host: opts.mdb_host,

@@ -59,6 +59,29 @@ describe('RethinkDBToMongoDB', function () {
       });
   });
 
+  it('should respect the arrayLimit parameter and throw an error if it\'s too low', function (done) {
+    this.timeout(15000);
+
+    // Clone connection options and set a very low array limit
+    var connectionOptsWithLowArrayLimit = JSON.parse(JSON.stringify(utils.rethinkDBConnectionOpts));
+    connectionOptsWithLowArrayLimit.arrayLimit = 1;
+
+    return datdaImport({
+      source: 'rethinkdb',
+      target: 'mongodb',
+      db: utils.testDBName,
+      rethinkdb: connectionOptsWithLowArrayLimit,
+      mongodb: utils.mongoDBConnectionOpts
+    })
+    .then(function () {
+      done(new Error('Should have thrown error'), null);
+    })
+    .catch(function (err) {
+      err.message.should.match(/Array over size limit/);
+      done();
+    });
+  });
+
   it('should map the `id` property to `_id`', function (done) {
     this.timeout(15000);
     return datdaImport({
