@@ -38,6 +38,7 @@ datda
   --rdb_port port_number       // (Default: 28015)
   --rdb_host host              // (Default: ‘localhost’)
   --rdb_arrayLimit             // Alternative arrayLimit for RethinkDB. Required for tables with over 100k documents. (Default: 100000)
+
   --rows_per_batch             // Number of documents/rows per insert query (Default: 1000)
   --log                        // Wheter to log out important events and progress (Default: false)
 ```
